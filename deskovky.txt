@@ -1,0 +1,9 @@
+Katan#true#3
+Dostihy a Sázky#true#2
+Člověče nezlob se#false#1
+Pexeso#false#1
+Šibenice#true#2
+Piškvorky#false#1
+Dáma#true#2
+Šachy#true#3
+Bomba#true#3
