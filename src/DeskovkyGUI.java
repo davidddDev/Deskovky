@@ -1,9 +1,10 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JMenuBar;
 
 public class  DeskovkyGUI extends JFrame {
     private JPanel panMain;
@@ -19,7 +20,8 @@ public class  DeskovkyGUI extends JFrame {
     private ButtonGroup bgOblibenost;
     private int currentIndex = 0;
     private List<Deskovka> deskovky;
-    private JMenuBar menu;
+    private JTable table;
+    private DefaultTableModel tableModel;
 
     public DeskovkyGUI(List<Deskovka> deskovky) {
         this.deskovky = deskovky;
@@ -27,12 +29,80 @@ public class  DeskovkyGUI extends JFrame {
     }
 
     private void initComponents() {
+
         panMain = new JPanel();
         setContentPane(panMain);
         setTitle("Deskovky");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        initMenu();
 
-        menu = new JMenuBar();
+        tableModel = new DefaultTableModel();
+        tableModel.addColumn("Název");
+        tableModel.addColumn("Zakoupeno");
+        tableModel.addColumn("Oblíbenost");
+        table = new JTable(tableModel);
+
+        for (Deskovka deskovka : deskovky) {
+            tableModel.addRow(new Object[]{deskovka.getNazev(), deskovka.isJeKoupena(), deskovka.getOblibenost()});
+        }
+
+        panMain.add(new JScrollPane(table), BorderLayout.CENTER);
+
+        panMain.add(tfNazev);
+        tfNazev.setEditable(false);
+        panMain.add(cbKoupena);
+        bgOblibenost = new ButtonGroup();
+        bgOblibenost.add(rbOblibenost1);
+        bgOblibenost.add(rbOblibenost2);
+        bgOblibenost.add(rbOblibenost3);
+
+        panOblibenost = new JPanel();
+        panOblibenost.add(lbOblibenost);
+        panOblibenost.add(rbOblibenost1);
+        panOblibenost.add(rbOblibenost2);
+        panOblibenost.add(rbOblibenost3);
+        panMain.add(panOblibenost);
+
+        btPredchozi.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentIndex--;
+                if (currentIndex < 0) {
+                    currentIndex = deskovky.size() - 1;
+                }
+                updateUI();
+            }
+        });
+        panMain.add(btPredchozi);
+
+        btDalsi.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentIndex++;
+                if (currentIndex >= deskovky.size()) {
+                    currentIndex = 0;
+                }
+                updateUI();
+            }
+        });
+        panMain.add(btDalsi);
+
+        updateUI();
+
+        pack();
+    }
+
+    private void updateUI() {
+            Deskovka deskovka = deskovky.get(currentIndex);
+            tfNazev.setText(deskovka.getNazev());
+            cbKoupena.setSelected(deskovka.isJeKoupena());
+            rbOblibenost1.setSelected(deskovka.getOblibenost() == 1);
+            rbOblibenost2.setSelected(deskovka.getOblibenost() == 2);
+            rbOblibenost3.setSelected(deskovka.getOblibenost() == 3);
+        }
+
+    private void initMenu() {
+        JMenuBar menu = new JMenuBar();
         this.setJMenuBar(menu);
 
         JMenu souborMenu = new JMenu("Soubor");
@@ -84,64 +154,6 @@ public class  DeskovkyGUI extends JFrame {
                                 "Počet zakoupených her: " + pocetZakoupenychHer);
             }
         });
-
-        panMain.add(tfNazev);
-        tfNazev.setEditable(false);
-
-        panMain.add(cbKoupena);
-
-
-        bgOblibenost = new ButtonGroup();
-        bgOblibenost.add(rbOblibenost1);
-        bgOblibenost.add(rbOblibenost2);
-        bgOblibenost.add(rbOblibenost3);
-
-        panOblibenost = new JPanel();
-        panOblibenost.add(lbOblibenost);
-        panOblibenost.add(rbOblibenost1);
-        panOblibenost.add(rbOblibenost2);
-        panOblibenost.add(rbOblibenost3);
-        panMain.add(panOblibenost);
-
-
-
-        btPredchozi.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                currentIndex--;
-                if (currentIndex < 0) {
-                    currentIndex = deskovky.size() - 1;
-                }
-                updateUI();
-            }
-        });
-        panMain.add(btPredchozi);
-
-
-        btDalsi.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                currentIndex++;
-                if (currentIndex >= deskovky.size()) {
-                    currentIndex = 0;
-                }
-                updateUI();
-            }
-        });
-        panMain.add(btDalsi);
-
-        updateUI();
-
-        pack();
     }
-
-    private void updateUI() {
-            Deskovka deskovka = deskovky.get(currentIndex);
-            tfNazev.setText(deskovka.getNazev());
-            cbKoupena.setSelected(deskovka.isJeKoupena());
-            rbOblibenost1.setSelected(deskovka.getOblibenost() == 1);
-            rbOblibenost2.setSelected(deskovka.getOblibenost() == 2);
-            rbOblibenost3.setSelected(deskovka.getOblibenost() == 3);
-        }
 
 }
